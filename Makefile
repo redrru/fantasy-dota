@@ -1,3 +1,5 @@
+all: run
+
 test:
 	go test -tags unit ./...
 
@@ -6,7 +8,7 @@ style:
 	go mod tidy
 	golangci-lint run
 
-up:
+run:
 	docker-compose -f ./build/docker/docker-compose.yaml up --build
 
 down:

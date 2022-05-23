@@ -9,6 +9,9 @@ style:
 	golangci-lint run
 
 run:
+	go run ./cmd/fantasy-dota/main.go
+
+up:
 	docker-compose -f ./build/docker/docker-compose.yaml up --build
 
 down:

@@ -1,0 +1,47 @@
+openapi: 3.0.3
+
+info:
+  title: Fantasy Dota App
+  version: 1.0.0
+
+paths:
+  /example:
+    get:
+      summary: Example GET handler.
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExampleResponse'
+    post:
+      summary: Example POST handler.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExampleRequest'
+      responses:
+        '200':
+          $ref: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExampleResponse'
+components:
+  schemas:
+    ExampleResponse:
+      type: object
+      properties:
+        name:
+          type: string
+      required:
+        - name
+    ExampleRequest:
+      type: object
+      properties:
+        name:
+          type: string
+      required:
+        - name

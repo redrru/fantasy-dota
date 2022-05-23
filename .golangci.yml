@@ -1,0 +1,36 @@
+run:
+  concurrency: 4
+  timeout: 5m
+  issues-exit-code: 1
+  tests: true
+  modules-download-mode: readonly
+
+output:
+  format: colored-line-number
+  print-issued-lines: true
+  print-linter-name: true
+
+linters:
+  enable-all: true
+  disable:
+    - scopelint
+    - golint
+    - maligned
+    - interfacer
+    - gci
+    - gochecknoinits
+    - wsl
+    - wrapcheck
+    - varnamelen
+    - nlreturn
+    - ireturn
+    - gomnd
+    - goerr113
+    - gochecknoglobals
+    - exhaustivestruct
+    - godot
+    - ineffassign
+
+linters-settings:
+  lll:
+    line-length: 140

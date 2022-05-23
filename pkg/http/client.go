@@ -1,59 +1,62 @@
 package http
 
 import (
-	"io"
+	"context"
+	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
-	"time"
+	"net/http/httptrace"
 
-	"github.com/hashicorp/go-retryablehttp"
+	"go.opentelemetry.io/contrib/instrumentation/net/http/httptrace/otelhttptrace"
+	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
+	"go.uber.org/zap"
+
+	"github.com/redrru/fantasy-dota/pkg/log"
+	"github.com/redrru/fantasy-dota/pkg/tracing"
 )
 
 type Client struct {
-	client *retryablehttp.Client
+	client *http.Client
 }
 
-func NewClient(logger *log.Logger) *Client {
-	reClient := retryablehttp.NewClient()
-	reClient.RetryMax = 20
-	reClient.RetryWaitMin = 10 * time.Millisecond
-	reClient.RetryWaitMax = 1 * time.Second
-	reClient.Logger = logger
-
+func NewClient() *Client {
 	return &Client{
-		client: reClient,
+		client: &http.Client{Transport: otelhttp.NewTransport(http.DefaultTransport)},
 	}
 }
 
-func (c *Client) Get(url string) ([]byte, error) {
-	req, err := retryablehttp.NewRequest(http.MethodGet, url, nil)
+func (c *Client) Get(ctx context.Context, url string) ([]byte, error) {
+	ctx, span := tracing.DefaultTracer().Start(ctx, "HttpClient")
+	defer span.End()
+
+	ctx = httptrace.WithClientTrace(ctx, otelhttptrace.NewClientTrace(ctx))
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {
 		return nil, err
 	}
 
+	log.GetLogger().Debug(ctx, "Sending GET request", zap.String("url", url))
 	res, err := c.client.Do(req)
+	defer func() {
+		if res == nil || res.Body == nil {
+			return
+		}
+		if err := res.Body.Close(); err != nil {
+			log.GetLogger().Warn(ctx, "Close http body", zap.String("url", url), zap.Error(err))
+		}
+	}()
 	if err != nil {
 		return nil, err
 	}
-	defer res.Body.Close()
 
-	return ioutil.ReadAll(res.Body)
-}
-
-func (c *Client) Post(url string, body []byte) error {
-	req, err := retryablehttp.NewRequest(http.MethodPost, url, body)
+	body, err := ioutil.ReadAll(res.Body)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	res, err := c.client.Do(req)
-	if err != nil {
-		return err
+	if res.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("response status: '%v', body: '%s'", res.Status, string(body))
 	}
-	defer res.Body.Close()
 
-	_, _ = io.Copy(ioutil.Discard, res.Body)
-
-	return nil
+	return body, nil
 }

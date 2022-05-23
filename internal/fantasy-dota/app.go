@@ -41,6 +41,7 @@ func NewApplication() *Application {
 		name:     "fantasy-dota",
 		env:      env.GetEnv(),
 		shutdown: make(chan os.Signal, 1),
+		err:      make(chan error, 1),
 		fetcher:  apifetcher.NewFetcher(),
 	}
 

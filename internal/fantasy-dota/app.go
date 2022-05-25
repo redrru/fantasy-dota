@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/labstack/echo/v4"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/exporters/jaeger"
 	"go.opentelemetry.io/otel/sdk/resource"
@@ -176,6 +177,11 @@ func (a *Application) serverHTTP() {
 		middleware.LoggingMiddleware(),
 		middleware.RecoveringMiddleware(),
 	)
+
+	a.http.GET("/metrics", func(c echo.Context) error {
+		promhttp.Handler().ServeHTTP(c.Response(), c.Request())
+		return nil
+	})
 
 	if err := a.http.Start(fmt.Sprintf(":%s", a.env.GetString(httpPortEnv))); err != nil {
 		a.httpErr <- err

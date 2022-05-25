@@ -11,6 +11,9 @@ func LoggingMiddleware() echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) (err error) {
 			defer func() {
+				if c.Path() == "/metrics" {
+					return
+				}
 				log.GetLogger().Info(c.Request().Context(),
 					"Handle request",
 					zap.String("method", c.Request().Method),

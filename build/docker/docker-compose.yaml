@@ -24,6 +24,8 @@ services:
     working_dir: /go/src/fantasy-dota
     env_file:
       - app.env
+    depends_on:
+      - postgres
   postgres:
     container_name: postgres
     environment:
@@ -43,9 +45,47 @@ services:
       - type: volume
         source: fantasy-dota-postgres-data
         target: /var/lib/postgresql/data
+  prometheus:
+    container_name: prometheus
+    image: prom/prometheus
+    ports:
+      - target: 9090
+        published: 9090
+        protocol: tcp
+    volumes:
+      - type: bind
+        source: ../../etc/prometheus.yml
+        target: /etc/prometheus/prometheus.yml
+      - type: volume
+        source: fantasy-dota-prometheus-data
+        target: /prometheus
+  grafana:
+    container_name: grafana
+    image: grafana/grafana-oss
+    ports:
+      - target: 3000
+        published: 3000
+        protocol: tcp
+    volumes:
+      - type: bind
+        source: ../../etc/grafana/provisioning
+        target: /etc/grafana/provisioning
+    depends_on:
+      - prometheus
+  pg_exporter:
+    container_name: pg-exporter
+    image: quay.io/prometheuscommunity/postgres-exporter
+    expose:
+      - 9187
+    env_file:
+      - app.env
+    depends_on:
+      - postgres
 networks:
   default:
       name: fantasy-dota
 volumes:
   fantasy-dota-postgres-data:
+    driver: local
+  fantasy-dota-prometheus-data:
     driver: local

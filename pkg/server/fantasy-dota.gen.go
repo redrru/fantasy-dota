@@ -7,18 +7,16 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-// ExampleRequest defines model for ExampleRequest.
-type ExampleRequest struct {
+// ExampleObject defines model for ExampleObject.
+type ExampleObject struct {
 	Name string `json:"name"`
 }
 
 // ExampleResponse defines model for ExampleResponse.
-type ExampleResponse struct {
-	Name string `json:"name"`
-}
+type ExampleResponse = []ExampleObject
 
 // PostExampleJSONBody defines parameters for PostExample.
-type PostExampleJSONBody = ExampleRequest
+type PostExampleJSONBody = ExampleObject
 
 // PostExampleJSONRequestBody defines body for PostExample for application/json ContentType.
 type PostExampleJSONRequestBody = PostExampleJSONBody

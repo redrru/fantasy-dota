@@ -21,10 +21,9 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ExampleRequest'
+              $ref: '#/components/schemas/ExampleObject'
       responses:
         '200':
-          $ref: ''
           content:
             application/json:
               schema:
@@ -32,13 +31,10 @@ paths:
 components:
   schemas:
     ExampleResponse:
-      type: object
-      properties:
-        name:
-          type: string
-      required:
-        - name
-    ExampleRequest:
+      type: array
+      items:
+        $ref: '#/components/schemas/ExampleObject'
+    ExampleObject:
       type: object
       properties:
         name:

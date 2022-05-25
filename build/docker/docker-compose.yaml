@@ -24,6 +24,28 @@ services:
     working_dir: /go/src/fantasy-dota
     env_file:
       - app.env
+  postgres:
+    container_name: postgres
+    environment:
+      TZ: UTC
+      PGTZ: UTC
+      POSTGRES_DB: fantasy_dota
+      POSTGRES_HOST: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_PORT: "5432"
+      POSTGRES_USER: postgres
+    image: postgres:14-alpine
+    ports:
+      - target: 5432
+        published: 5432
+        protocol: tcp
+    volumes:
+      - type: volume
+        source: fantasy-dota-postgres-data
+        target: /var/lib/postgresql/data
 networks:
   default:
-      name: local
+      name: fantasy-dota
+volumes:
+  fantasy-dota-postgres-data:
+    driver: local

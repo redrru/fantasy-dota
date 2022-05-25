@@ -18,10 +18,6 @@ var (
 	once      sync.Once
 )
 
-func init() {
-	_ = GetLogger()
-}
-
 type Logger interface {
 	Warn(ctx context.Context, msg string, fields ...zap.Field)
 	Debug(ctx context.Context, msg string, fields ...zap.Field)

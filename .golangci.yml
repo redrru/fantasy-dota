@@ -30,6 +30,7 @@ linters:
     - exhaustivestruct
     - godot
     - ineffassign
+    - goprintffuncname
 
 linters-settings:
   lll:

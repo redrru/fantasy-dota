@@ -30,7 +30,6 @@ type Fetcher struct {
 func NewFetcher() *Fetcher {
 	fetcher := &Fetcher{
 		httpClient: http.NewClient(),
-		handler:    make(chan Handler, 5),
 		close:      make(chan struct{}),
 	}
 
@@ -57,20 +56,20 @@ func (f *Fetcher) Run() {
 					if r := recover(); r != nil {
 						if panicErr, ok := r.(error); ok {
 							err = panicErr
-							logger.Error(ctx, "Fetch panic", zap.Error(panicErr))
+							logger.Error(ctx, "[Fetcher] Fetch panic", zap.Error(panicErr))
 						}
 					}
 				}()
 
 				resp, err := f.fetch(ctx, handler)
 				if err != nil {
-					logger.Error(ctx, "Fetch", zap.Error(err))
+					logger.Error(ctx, "[Fetcher] Fetch", zap.Error(err))
 					return err
 				}
 
 				err = handler.Handle(ctx, resp)
 				if err != nil {
-					logger.Error(ctx, "Handle", zap.Error(err))
+					logger.Error(ctx, "[Fetcher] Handle", zap.Error(err))
 					return err
 				}
 
@@ -87,14 +86,20 @@ func (f *Fetcher) Close() error {
 		ch <- struct{}{}
 	}
 
-	log.GetLogger().Debug(context.Background(), "Fetcher exited")
+	log.GetLogger().Debug(context.Background(), "[Fetcher] Exited")
 
 	return nil
 }
 
 func (f *Fetcher) initTickers() {
+	if f.handler == nil {
+		f.handler = make(chan Handler, len(f.handlers))
+	}
+
 	for _, handler := range f.handlers {
 		handler := handler
+		f.handler <- handler
+
 		stop := make(chan struct{})
 		f.tickersClose = append(f.tickersClose, stop)
 

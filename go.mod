@@ -4,8 +4,10 @@ go 1.17
 
 require (
 	github.com/brianvoe/gofakeit/v6 v6.16.0
+	github.com/jackc/pgx/v4 v4.16.1
 	github.com/labstack/echo/v4 v4.7.2
 	github.com/stretchr/testify v1.7.1
+	github.com/uptrace/opentelemetry-go-extra/otelgorm v0.1.13
 	go.opentelemetry.io/contrib/instrumentation/net/http/httptrace/otelhttptrace v0.32.0
 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.32.0
 	go.opentelemetry.io/otel v1.7.0
@@ -14,6 +16,8 @@ require (
 	go.opentelemetry.io/otel/sdk v1.7.0
 	go.opentelemetry.io/otel/trace v1.7.0
 	go.uber.org/zap v1.21.0
+	gorm.io/driver/postgres v1.3.6
+	gorm.io/gorm v1.23.5
 )
 
 require (
@@ -21,6 +25,15 @@ require (
 	github.com/felixge/httpsnoop v1.0.2 // indirect
 	github.com/go-logr/logr v1.2.3 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
+	github.com/jackc/chunkreader/v2 v2.0.1 // indirect
+	github.com/jackc/pgconn v1.12.1 // indirect
+	github.com/jackc/pgio v1.0.0 // indirect
+	github.com/jackc/pgpassfile v1.0.0 // indirect
+	github.com/jackc/pgproto3/v2 v2.3.0 // indirect
+	github.com/jackc/pgservicefile v0.0.0-20200714003250-2b9c44734f2b // indirect
+	github.com/jackc/pgtype v1.11.0 // indirect
+	github.com/jinzhu/inflection v1.0.0 // indirect
+	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/kr/pretty v0.3.0 // indirect
 	github.com/labstack/gommon v0.3.1 // indirect
 	github.com/mattn/go-colorable v0.1.12 // indirect
@@ -28,7 +41,7 @@ require (
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/rogpeppe/go-internal v1.8.0 // indirect
-	github.com/stretchr/objx v0.1.1 // indirect
+	github.com/uptrace/opentelemetry-go-extra/otelsql v0.1.13 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasttemplate v1.2.1 // indirect
 	go.opentelemetry.io/otel/metric v0.30.0 // indirect

@@ -6,8 +6,10 @@ import (
 
 var _ server.ServerInterface = (*Server)(nil)
 
-type Server struct{}
+type Server struct {
+	usecase usecase
+}
 
-func NewServer() *Server {
-	return &Server{}
+func NewServer(usecase usecase) *Server {
+	return &Server{usecase: usecase}
 }

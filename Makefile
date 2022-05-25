@@ -8,9 +8,6 @@ style:
 	go mod tidy
 	golangci-lint run
 
-run:
-	go run ./cmd/fantasy-dota/main.go
-
 up:
 	docker-compose -f ./build/docker/docker-compose.yaml up --build
 
@@ -19,3 +16,14 @@ down:
 
 codegen:
 	oapi-codegen -old-config-style -generate "types,server" -package server api/http/openapi.yaml > pkg/server/fantasy-dota.gen.go
+
+run-compile-daemon:
+	CompileDaemon \
+		-build="go build -o ./.tmp/fantasy-dota ./cmd/fantasy-dota/main.go" \
+		-command="./.tmp/fantasy-dota" \
+		-exclude-dir=api \
+		-exclude-dir=.run \
+		-exclude-dir=.git \
+		-exclude=fantasy-dota \
+		-color \
+		-graceful-kill=true

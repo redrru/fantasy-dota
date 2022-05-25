@@ -92,6 +92,8 @@ func (a *Application) Run() {
 
 	signal.Notify(a.shutdown, os.Interrupt, syscall.SIGQUIT, syscall.SIGTERM)
 
+	a.migrationDB()
+
 	go a.fetcher.Run()
 	go a.serverHTTP()
 
@@ -101,10 +103,10 @@ func (a *Application) Run() {
 	case sig := <-a.shutdown:
 		log.GetLogger().Info(context.Background(), fmt.Sprintf(logStr, "Got signal"), zap.String("signal", sig.String()))
 	case err := <-a.httpErr:
-		log.GetLogger().Info(context.Background(), fmt.Sprintf(logStr, "Got fatal err"), zap.Error(err))
+		log.GetLogger().Info(context.Background(), fmt.Sprintf(logStr, "Got http fatal err"), zap.Error(err))
 	}
 
-	a.close()
+	a.stop()
 }
 
 func (a *Application) initDB() {
@@ -125,7 +127,6 @@ func (a *Application) initDB() {
 	a.closers = append(a.closers, a.DB.Close)
 
 	a.waitDB()
-	a.migrationDB()
 }
 
 func (a *Application) waitDB() {
@@ -181,9 +182,10 @@ func (a *Application) serverHTTP() {
 	}
 }
 
-func (a *Application) close() {
+func (a *Application) stop() {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
+
 	if err := a.tp.Shutdown(ctx); err != nil {
 		log.GetLogger().Error(context.Background(), fmt.Sprintf(logStr, "TracerProvider shutdown error"), zap.Error(err))
 	}
